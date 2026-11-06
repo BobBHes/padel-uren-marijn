@@ -1245,14 +1245,13 @@ function factuurSheet(f) {
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     };
     $('#deel').onclick = async () => {
-      const tekstNu = tekst();
+      const berichtTekst = tekst();
       if (!pdf) await klaar;
       if (!pdf) return;
       const file = new File([pdf], bestandsnaam(f), { type: 'application/pdf' });
-      const tekst = tekstNu;
       if (navigator.canShare?.({ files: [file] })) {
         try {
-          await navigator.share({ files: [file], title: `${herinner ? 'Herinnering f' : 'F'}actuur ${f.nummer}`, text: tekst });
+          await navigator.share({ files: [file], title: `${herinner ? 'Herinnering f' : 'F'}actuur ${f.nummer}`, text: berichtTekst });
           await bewaarFactuur(f, herinner ? { herinnerdOp: vandaag() } : { verstuurdOp: f.verstuurdOp || vandaag() });
           await sluit(); toast(herinner ? `Herinnering ${f.nummer} verstuurd` : `Factuur ${f.nummer} verstuurd · ${kreet()}`);
           return;
@@ -1260,7 +1259,7 @@ function factuurSheet(f) {
       }
       // Geen deelmenu (bv. op een computer): downloaden en bericht kopiëren
       download(pdf, bestandsnaam(f));
-      try { await navigator.clipboard.writeText(tekst); } catch {}
+      try { await navigator.clipboard.writeText(berichtTekst); } catch {}
       toast('PDF gedownload en bericht gekopieerd', { actie: 'Markeer verstuurd', bij: async () => { await bewaarFactuur(f, herinner ? { herinnerdOp: vandaag() } : { verstuurdOp: vandaag() }); toast('Gemarkeerd als verstuurd'); } });
     };
     $('#kopieer').onclick = async () => {
